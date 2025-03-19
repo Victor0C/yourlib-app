@@ -1,0 +1,19 @@
+.section {
+	background-image: url('background.png');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.card-footer {
+	display: flex;
+	justify-content: center;
+}
+
+.btn-entrar {
+	background-color: oklch(0.36 0.02 34.37);
+}
+
+.text-card-foreground {
+	color: oklch(0.36 0.02 34.37);
+}
