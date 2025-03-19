@@ -23,8 +23,12 @@ import {
 import login from '@/services/login';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useState } from 'react';
 
 const Login = () => {
+
+	const [disableButton, setDisableButton] = useState(false);
+
 	const FormSchema = z.object({
 		email: z.string().email({
 			message: 'Insira um email válido',
@@ -45,6 +49,8 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	async function onSubmit(data: z.infer<typeof FormSchema>): Promise<void> {
+		setDisableButton(true);
+
 		toast.promise(login(data), {
 			loading: 'Carregando...',
 			success: (data) => {
@@ -52,13 +58,15 @@ const Login = () => {
 				return `Bem-vindo, mestre ${data.name}!`;
 			},
 			error: (error) => {
+				setDisableButton(false);
+
 				if (error instanceof Error) {
 					return error.message;
 				}
 
 				return 'Erro desconhecido';
 			},
-			position: "top-right",
+			position: 'top-right',
 		});
 	}
 
@@ -103,7 +111,7 @@ const Login = () => {
 							/>
 						</CardContent>
 						<CardFooter className='card-footer'>
-							<Button type='submit' className='w-full'>
+							<Button type='submit' className='w-full' disabled={disableButton}>
 								Entrar
 							</Button>
 						</CardFooter>
