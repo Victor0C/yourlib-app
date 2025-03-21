@@ -14,11 +14,11 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const user = JSON.parse(Cookies.get('user') ?? 'Usuário');
+const user_name = Cookies.get('user') ? JSON.parse(Cookies.get('user')!).name : 'Usuário';
 
 const items = [
 	{
-		title: user.name,
+		title: user_name,
 		url: '/user',
 		icon: User,
 	},
