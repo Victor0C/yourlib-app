@@ -58,8 +58,8 @@ export function AppSidebar() {
 			<SidebarContent className='bg-[#1F2328] text-[#BD8D4C]'>
 				<SidebarGroup>
 					<SidebarGroupLabel
-						className={`text-5xl spectral-sc-semibold text-[#cdc4c4] group-data-[state="expanded"]:mb-4 ${
-							isMobile ? 'mb-5 pt-2' : ''
+						className={`text-5xl spectral-sc-semibold pt-4 text-[#cdc4c4] group-data-[state="expanded"]:mb-4 ${
+							isMobile ? 'mb-5' : ''
 						}`}>
 						YourLib
 					</SidebarGroupLabel>
