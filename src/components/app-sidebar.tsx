@@ -1,4 +1,4 @@
-import {  BookUp2, BookUser, Home, SquareLibrary } from 'lucide-react';
+import { BookPlus, BookType, BookUp2, BookUser, Home, ListOrdered, SquareLibrary, User } from 'lucide-react';
 
 import {
 	Sidebar,
@@ -10,13 +10,17 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+const user = JSON.parse(Cookies.get('user') ?? 'Usuário');
 
 const items = [
 	{
-		title: 'Home',
-		url: '/home',
-		icon: Home,
+		title: user.name,
+		url: '/user',
+		icon: User,
 	},
 	{
 		title: 'Livros',
@@ -26,24 +30,38 @@ const items = [
 	{
 		title: 'Cadastrar livro',
 		url: '/books/register',
-		icon: BookUp2,
+		icon: BookPlus,
 	},
 	{
 		title: 'Livros emprestados',
 		url: '/books/loans',
 		icon: BookUser,
 	},
+	{
+		title: 'Gêneros de livros',
+		url: '/books/genres',
+		icon: BookType,
+	},
+	{
+		title: 'Listas de espera',
+		url: '/books/waitlists',
+		icon: ListOrdered,
+	},
 ];
 
 export function AppSidebar() {
 	const navigate = useNavigate();
+	const isMobile = useIsMobile();
 
 	return (
-		<Sidebar className='!border-none'>
+		<Sidebar className='!border-none' collapsible='icon'>
 			<SidebarContent className='bg-[#1F2328] text-[#BD8D4C]'>
 				<SidebarGroup>
-					<SidebarGroupLabel className='text-5xl text-[#cdc4c4] mb-8 pt-2 spectral-sc-semibold'>
-						YuorLib
+					<SidebarGroupLabel
+						className={`text-5xl spectral-sc-semibold text-[#cdc4c4] group-data-[state="expanded"]:mb-4 ${
+							isMobile ? 'mb-5 pt-2' : ''
+						}`}>
+						YourLib
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>

@@ -11,11 +11,34 @@ export const AppRoutes = () => {
 
 				<Route element={<ProtectedRoutes />}>
 					<Route element={<Layout />}>
-						<Route path='/home' element={<p>Teste da home</p>} />
-						<Route path='/books' element={<p>Teste do books</p>} />
-						<Route path='/books/register' element={<p>Teste do register</p>} />
-						<Route path='/books/loans' element={<p>Teste do loans</p>} />
-						<Route path='*' element={<Navigate to='/home' />} />
+						<Route
+							path='/user'
+							element={<p className='text-white'>Tela do usuário</p>}
+						/>
+						<Route
+							path='/books'
+							element={<p className='text-white'>Tela dos livros</p>}
+						/>
+						<Route
+							path='/books/register'
+							element={
+								<p className='text-white'>Tela do cadastro dos livros</p>
+							}
+						/>
+						<Route
+							path='/books/loans'
+							element={<p className='text-white'>Tela dos emprestimos</p>}
+						/>
+						<Route
+							path='/books/Waitlists'
+							element={<p className='text-white'>Tela de espera</p>}
+						/>
+						<Route
+							path='/books/genres'
+							element={<p className='text-white'>Tela de generos dos livros</p>}
+						/>
+
+						<Route path='*' element={<Navigate to='/books' />} />
 					</Route>
 				</Route>
 			</Routes>

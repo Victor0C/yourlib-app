@@ -54,7 +54,7 @@ const Login = () => {
 		toast.promise(login(data), {
 			loading: 'Carregando...',
 			success: (data) => {
-				navigate('/home');
+				navigate('/books');
 				return `Bem-vindo, mestre ${data.name}!`;
 			},
 			error: (error) => {
