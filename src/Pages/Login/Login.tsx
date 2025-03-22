@@ -1,4 +1,4 @@
-import './Login.css';
+import { useMyToastPromise } from '@/components/MyToasts';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -8,10 +8,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import {
 	Form,
 	FormControl,
@@ -20,13 +16,16 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import login from '@/services/login';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import './Login.css';
 
 const Login = () => {
-
 	const [disableButton, setDisableButton] = useState(false);
 
 	const FormSchema = z.object({
@@ -47,27 +46,25 @@ const Login = () => {
 	});
 
 	const navigate = useNavigate();
+	const toastPromise = useMyToastPromise();
 
 	async function onSubmit(data: z.infer<typeof FormSchema>): Promise<void> {
 		setDisableButton(true);
 
-		toast.promise(login(data), {
-			loading: 'Carregando...',
-			success: (data) => {
+		toastPromise(
+			login(data),
+			(data) => {
 				navigate('/books');
 				return `Bem-vindo, mestre ${data.name}!`;
 			},
-			error: (error) => {
+			(error) => {
 				setDisableButton(false);
-
 				if (error instanceof Error) {
 					return error.message;
 				}
-
 				return 'Erro desconhecido';
-			},
-			position: 'top-right',
-		});
+			}
+		);
 	}
 
 	return (
@@ -127,12 +124,11 @@ const Login = () => {
 							/>
 						</CardContent>
 						<CardFooter className='card-footer'>
-							<Button 
-								type='submit' 
+							<Button
+								type='submit'
 								className='w-full bg-[#BD8D4C] text-[#1F2328] hover:bg-[#A77B3B] 
 								font-bold transition-colors disabled:opacity-50'
-								disabled={disableButton}
-							>
+								disabled={disableButton}>
 								Entrar
 							</Button>
 						</CardFooter>
