@@ -1,4 +1,4 @@
-import './Login.css';
+import { useMyToastPromise } from '@/components/MyToasts';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -8,10 +8,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import {
 	Form,
 	FormControl,
@@ -20,13 +16,16 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import login from '@/services/login';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import './Login.css';
 
 const Login = () => {
-
 	const [disableButton, setDisableButton] = useState(false);
 
 	const FormSchema = z.object({
@@ -47,51 +46,58 @@ const Login = () => {
 	});
 
 	const navigate = useNavigate();
+	const toastPromise = useMyToastPromise();
 
 	async function onSubmit(data: z.infer<typeof FormSchema>): Promise<void> {
 		setDisableButton(true);
 
-		toast.promise(login(data), {
-			loading: 'Carregando...',
-			success: (data) => {
+		toastPromise(
+			login(data),
+			(data) => {
 				navigate('/books');
 				return `Bem-vindo, mestre ${data.name}!`;
 			},
-			error: (error) => {
+			(error) => {
 				setDisableButton(false);
-
 				if (error instanceof Error) {
 					return error.message;
 				}
-
 				return 'Erro desconhecido';
-			},
-			position: 'top-right',
-		});
+			}
+		);
 	}
 
 	return (
 		<section className='section w-screen h-screen flex justify-center items-center'>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
-					<Card className='w-96 h-auto card'>
-						<CardHeader>
-							<CardTitle>Olá, Mestre!</CardTitle>
-							<CardDescription>
+					<Card className='w-96 h-auto card bg-[#1F2328] border-[#BD8D4C] border-2'>
+						<CardHeader className='space-y-2'>
+							<CardTitle className='text-[#BD8D4C] text-2xl font-bold text-center'>
+								Olá, Mestre!
+							</CardTitle>
+							<CardDescription className='text-[#BD8D4C] text-center'>
 								Informe suas credenciais para acessar sua biblioteca
 							</CardDescription>
 						</CardHeader>
-						<CardContent className='space-y-2'>
+						<CardContent className='space-y-4'>
 							<FormField
 								control={form.control}
 								name='email'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Email</FormLabel>
+										<FormLabel className='text-[#BD8D4C] font-medium'>
+											Email
+										</FormLabel>
 										<FormControl>
-											<Input type='email' {...field} />
+											<Input
+												className='text-[#d8d6d2] bg-[#282C34] border-[#BD8D4C]
+												focus:border-[#BD8D4C] focus:ring-[#BD8D4C]'
+												type='email'
+												{...field}
+											/>
 										</FormControl>
-										<FormMessage />
+										<FormMessage className='text-red-400' />
 									</FormItem>
 								)}
 							/>
@@ -101,17 +107,28 @@ const Login = () => {
 								name='password'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Senha</FormLabel>
+										<FormLabel className='text-[#BD8D4C] font-medium'>
+											Senha
+										</FormLabel>
 										<FormControl>
-											<Input type='password' {...field} />
+											<Input
+												className='text-[#d8d6d2] bg-[#282C34] border-[#BD8D4C]
+												focus:border-[#BD8D4C] focus:ring-[#BD8D4C]'
+												type='password'
+												{...field}
+											/>
 										</FormControl>
-										<FormMessage />
+										<FormMessage className='text-red-400' />
 									</FormItem>
 								)}
 							/>
 						</CardContent>
 						<CardFooter className='card-footer'>
-							<Button type='submit' className='w-full' disabled={disableButton}>
+							<Button
+								type='submit'
+								className='w-full bg-[#BD8D4C] text-[#1F2328] hover:bg-[#A77B3B] 
+								font-bold transition-colors disabled:opacity-50'
+								disabled={disableButton}>
 								Entrar
 							</Button>
 						</CardFooter>
