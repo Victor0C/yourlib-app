@@ -20,12 +20,6 @@ export const AppRoutes = () => {
 							element={<p className='text-white'>Tela dos livros</p>}
 						/>
 						<Route
-							path='/books/register'
-							element={
-								<p className='text-white'>Tela do cadastro dos livros</p>
-							}
-						/>
-						<Route
 							path='/books/loans'
 							element={<p className='text-white'>Tela dos emprestimos</p>}
 						/>
@@ -36,6 +30,11 @@ export const AppRoutes = () => {
 						<Route
 							path='/books/genres'
 							element={<p className='text-white'>Tela de generos dos livros</p>}
+						/>
+
+						<Route
+							path='/books/authors'
+							element={<p className='text-white'>Tela de generos dos autores</p>}
 						/>
 
 						<Route path='*' element={<Navigate to='/books' />} />
