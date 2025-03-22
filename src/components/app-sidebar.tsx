@@ -1,4 +1,12 @@
-import { BookPlus, BookType, BookUp2, BookUser, Home, ListOrdered, SquareLibrary, User } from 'lucide-react';
+import {
+	BookPlus,
+	BookType,
+	BookUser,
+	ListOrdered,
+	SquareLibrary,
+	User,
+	LogOut
+} from 'lucide-react';
 
 import {
 	Sidebar,
@@ -10,11 +18,13 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import { useIsMobile } from '@/hooks/use-mobile';
 
-const user_name = Cookies.get('user') ? JSON.parse(Cookies.get('user')!).name : 'Usuário';
+const user_name = Cookies.get('user')
+	? JSON.parse(Cookies.get('user')!).name
+	: 'Usuário';
 
 const items = [
 	{
@@ -55,7 +65,7 @@ export function AppSidebar() {
 
 	return (
 		<Sidebar className='!border-none' collapsible='icon'>
-			<SidebarContent className='bg-[#1F2328] text-[#BD8D4C]'>
+			<SidebarContent className='bg-[#1F2328] text-[#BD8D4C] flex flex-col h-full'>
 				<SidebarGroup>
 					<SidebarGroupLabel
 						className={`text-5xl spectral-sc-semibold pt-4 text-[#cdc4c4] group-data-[state="expanded"]:mb-4 ${
@@ -83,6 +93,28 @@ export function AppSidebar() {
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+				<SidebarGroup className='mt-auto mb-4'>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<SidebarMenuButton
+									className='text-lg hover:bg-[#cdc4c4] hover:text-black'
+									asChild>
+									<p
+										onClick={() => {
+											Cookies.remove('user');
+											Cookies.remove('auth-token');
+											navigate('/login');
+										}}
+										className='cursor-pointer'>
+										<LogOut />
+										<span>Logout</span>
+									</p>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>
