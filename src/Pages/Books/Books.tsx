@@ -1,3 +1,4 @@
+import CreateEditBook from '@/components/Books/CreateEditBook';
 import { useMyToastPromise } from '@/components/MyToasts';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -19,7 +20,9 @@ const Books = () => {
 	const [books, setBooks] = useState<Book[]>([]);
 	const [requestBooks] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [search, setSearch] = useState<boolean>('');
+	const [search, setSearch] = useState<string>('');
+	const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
+
 	const toastPromise = useMyToastPromise();
 
 	useEffect(() => {
@@ -43,6 +46,10 @@ const Books = () => {
 
 	return (
 		<Card className='w-full h-auto card bg-[#1F2328] border-[#BD8D4C] border-2 py-2 px-2 '>
+			<CreateEditBook
+				open={openCreateUpdate}
+				onOpenChange={setOpenCreateUpdate}
+			/>
 			<div className='flex w-full items-center space-x-2'>
 				<form
 					className='flex w-full items-center'
@@ -53,7 +60,7 @@ const Books = () => {
 					<Input
 						name='search'
 						className='text-[#d8d6d2] bg-[#282C34] border-[#BD8D4C]
-              focus:border-[#BD8D4C] focus:ring-[#BD8D4C]'
+        focus:border-[#BD8D4C] focus:ring-[#BD8D4C]'
 						type='text'
 						placeholder='Pesquise um livro'
 						disabled={isLoading}
@@ -61,7 +68,7 @@ const Books = () => {
 					<Button
 						type='submit'
 						className='bg-[#BD8D4C] text-[#1F2328] hover:bg-[#A77B3B] 
-            font-bold transition-colors disabled:opacity-50 ml-2'
+      font-bold transition-colors disabled:opacity-50 ml-2'
 						disabled={isLoading}>
 						<Search />
 					</Button>
@@ -69,8 +76,9 @@ const Books = () => {
 				<Button
 					type='button'
 					className='bg-[#BD8D4C] text-[#1F2328] hover:bg-[#A77B3B] 
-          font-bold transition-colors disabled:opacity-50'
-					disabled={isLoading}>
+      font-bold transition-colors disabled:opacity-50'
+					disabled={isLoading}
+					onClick={() => setOpenCreateUpdate(true)}>
 					<Plus />
 				</Button>
 			</div>
@@ -99,7 +107,7 @@ const Books = () => {
 					</TableHeader>
 					<TableBody className='text-[#f1e2e2]'>
 						{books.map((book: Book) => (
-							<TableRow className='hover:bg-transparent'>
+							<TableRow key={book._id} className='hover:bg-transparent'>
 								<TableCell className='font-medium w-9/12'>
 									{book.title}
 								</TableCell>

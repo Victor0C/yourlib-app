@@ -2,6 +2,7 @@ import { AxiosError } from 'axios';
 import api from './axios';
 
 interface Book {
+	_id: string,
 	title: string;
 	authors: string[];
 	pages: number;
