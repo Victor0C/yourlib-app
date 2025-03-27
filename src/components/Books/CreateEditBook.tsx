@@ -54,6 +54,7 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 	const toastPromise = useMyToastPromise();
 	const [authors, setAuthors] = useState<Author[]>([]);
 	const [genres, setGenres] = useState<Genre[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (props.open && authors.length == 0 && genres.length == 0) {
@@ -113,14 +114,17 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 	});
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
+		setIsLoading(true);
 		toastPromise(
 			createBook(data),
 			() => {
-				props.onOpenChange(false);
 				setTimeout(() => props.refresh(), 1000);
+				close();
+				setIsLoading(false);
 				return 'Livro cadastrado com sucesso';
 			},
 			(error) => {
+				setIsLoading(false);
 				if (error instanceof Error) {
 					return error.message;
 				}
@@ -509,13 +513,15 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 						<SheetFooter>
 							<Button
 								type='submit'
-								className='bg-[#BD8D4C] text-[#1F2328] hover:bg-[#9E744A]'>
+								className='bg-[#BD8D4C] text-[#1F2328] hover:bg-[#9E744A]'
+								disabled={isLoading}>
 								Salvar
 							</Button>
 							<Button
 								type='button'
 								onClick={() => close()}
-								className='bg-red-600 text-[#1F2328] hover:bg-red-700'>
+								className='bg-red-600 text-[#1F2328] hover:bg-red-700'
+								disabled={isLoading}>
 								Cancelar
 							</Button>
 						</SheetFooter>
