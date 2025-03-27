@@ -30,7 +30,7 @@ async function getBooks() {
 	}
 }
 
-async function createBook(book: Book) {
+async function createBook(book: Omit<Book, '_id'>) {
 	try {
 		const { data } = await api.post<Book>('/users/books', book);
 		return data;
