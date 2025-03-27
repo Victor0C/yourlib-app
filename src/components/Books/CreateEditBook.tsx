@@ -111,6 +111,15 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			title: '',
+			authors: [],
+			genres: [],
+			condition: '',
+			pages: 0,
+			description: '',
+			status: '',
+		},
 	});
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
