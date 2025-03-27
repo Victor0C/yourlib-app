@@ -9,7 +9,7 @@ import {
 	SheetTitle,
 } from '@/components/ui/sheet';
 import { Author, getAll as getAuthors } from '@/services/Auhors';
-import { Book } from '@/services/Books';
+import { Book, createBook } from '@/services/Books';
 import { Genre, getAll as getGenres } from '@/services/Genres';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -23,7 +23,7 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage
+	FormMessage,
 } from '../ui/form';
 
 import {
@@ -40,11 +40,13 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '../ui/checkbox';
 import { Textarea } from '../ui/textarea';
 
 interface CreateEditBookProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	refresh: () => void;
 	book: Book | null;
 }
 
@@ -54,7 +56,7 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 	const [genres, setGenres] = useState<Genre[]>([]);
 
 	useEffect(() => {
-		if (props.open && (authors.length == 0) && (genres.length == 0) ) {
+		if (props.open && authors.length == 0 && genres.length == 0) {
 			toastPromise(
 				Promise.all([getAuthors(), getGenres()]),
 				([authorsData, genresData]) => {
@@ -73,30 +75,37 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 	}, [props.open]);
 
 	const FormSchema = z.object({
-		titulo: z.string({
+		title: z.string({
 			message: 'Insira o título do livro',
 		}),
-		author: z.string({
-			message: 'Selecione o autor do livro',
-		}),
-		genre: z.string({
-			message: 'Selecione o autor do livro',
-		}),
+		authors: z.array(z.string()).min(1, 'Selecione pelo menos um autor'),
+		genres: z.array(z.string()).min(1, 'Selecione pelo menos um gênero'),
 		condition: z.string({
 			message: 'Selecione o estado do livro',
 		}),
-		pages: z.number({
-			message: 'Informe quantas páginas tem o livro',
-		}),
+		pages: z.coerce
+			.number({
+				message: 'Informe quantas páginas tem o livro',
+				invalid_type_error: 'Deve ser um número válido',
+			})
+			.min(1, 'O livro deve ter pelo menos 1 página')
+			.positive('O número de páginas deve ser positivo'),
 		description: z.string({
 			message: 'Informe a descrição do livro',
+		}),
+		status: z.string({
+			message: 'Selecione o status do livro',
 		}),
 	});
 
 	const conditions = [
-		{ label: 'Bom', value: 'good' },
-		{ label: 'Perfeito', value: 'perfect' },
-		{ label: 'Ruim', value: 'bad' }
+		{ label: 'Novo', value: 'NEW' },
+		{ label: 'Bom', value: 'GOOD' },
+		{ label: 'Desgastado', value: 'WORN' },
+	];
+	const listStatus = [
+		{ label: 'Disponível', value: 'AVAILABLE' },
+		{ label: 'Emprestado', value: 'BORROWED' },
 	];
 
 	const form = useForm<z.infer<typeof FormSchema>>({
@@ -104,9 +113,20 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 	});
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
-		let dataToSubmit = {
-			authors = [data.author]
-		 }
+		toastPromise(
+			createBook(data),
+			() => {
+				props.onOpenChange(false);
+				setTimeout(() => props.refresh(), 1000);
+				return 'Livro cadastrado com sucesso';
+			},
+			(error) => {
+				if (error instanceof Error) {
+					return error.message;
+				}
+				return 'Erro desconhecido';
+			}
+		);
 	}
 
 	function close() {
@@ -137,7 +157,7 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 						<div className='grid gap-4 py-4 px-4'>
 							<FormField
 								control={form.control}
-								name='titulo'
+								name='title'
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className='text-[#BD8D4C]'>Titulo</FormLabel>
@@ -155,10 +175,10 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 							/>
 							<FormField
 								control={form.control}
-								name='author'
+								name='authors'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-[#BD8D4C]'>Autor</FormLabel>
+										<FormLabel className='text-[#BD8D4C]'>Autores</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
@@ -166,19 +186,27 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 														variant='outline'
 														role='combobox'
 														className={cn(
-															'w-full justify-between text-[#BD8D4C] bg-[#1F2328] border-[#BD8D4C]',
-															!field.value && 'text-[#838586] opacity-70'
+															'w-full justify-between text-[#BD8D4C] bg-[#1F2328] border-[#BD8D4C] truncate px-4',
+															!field.value?.length &&
+																'text-[#838586] opacity-70'
 														)}>
-														{field.value
-															? authors.find(
-																	(author: Author) => author._id === field.value
-															  )?.name
-															: 'Selecione o autor'}
+														<span className='truncate pr-0.5'>
+															{field.value?.length
+																? field.value
+																		.map(
+																			(id) =>
+																				authors.find(
+																					(author) => author._id === id
+																				)?.name
+																		)
+																		.join(', ')
+																: 'Selecione os autores'}
+														</span>
 														<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
-											<PopoverContent className='w-85  p-0 bg-[#1F2328] border-[#BD8D4C] '>
+											<PopoverContent className='w-85 p-0 bg-[#1F2328] border-[#BD8D4C]'>
 												<Command className='bg-[#1F2328]'>
 													<CommandInput
 														placeholder='Procure o autor...'
@@ -195,17 +223,25 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 																	key={author._id}
 																	className='text-[#BD8D4C] hover:bg-[#2D3339]'
 																	onSelect={() => {
-																		form.setValue('author', author._id);
+																		const currentValues = field.value || [];
+																		const newValues = currentValues.includes(
+																			author._id
+																		)
+																			? currentValues.filter(
+																					(id) => id !== author._id
+																			  )
+																			: [...currentValues, author._id];
+																		form.setValue('authors', newValues);
 																	}}>
-																	{author.name}
-																	<Check
-																		className={cn(
-																			'ml-auto text-[#BD8D4C]',
-																			author._id === field.value
-																				? 'opacity-100'
-																				: 'opacity-0'
-																		)}
-																	/>
+																	<div className='flex items-center'>
+																		<Checkbox
+																			checked={field.value?.includes(
+																				author._id
+																			)}
+																			className='mr-2 data-[state=checked]:text-[#BD8D4C] data-[state=checked]:border-[#BD8D4C] data-[state=checked]:bg-[#F5F5F5]'
+																		/>
+																		{author.name}
+																	</div>
 																</CommandItem>
 															))}
 														</CommandGroup>
@@ -219,10 +255,10 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 							/>
 							<FormField
 								control={form.control}
-								name='genre'
+								name='genres'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className='text-[#BD8D4C]'>Gênero</FormLabel>
+										<FormLabel className='text-[#BD8D4C]'>Gêneros</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
@@ -230,14 +266,21 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 														variant='outline'
 														role='combobox'
 														className={cn(
-															'w-full justify-between text-[#BD8D4C] bg-[#1F2328] border-[#BD8D4C]',
-															!field.value && 'text-[#838586] opacity-70'
+															'w-full justify-between text-[#BD8D4C] bg-[#1F2328] border-[#BD8D4C] truncate px-4',
+															!field.value?.length &&
+																'text-[#838586] opacity-70'
 														)}>
-														{field.value
-															? genres.find(
-																	(genre: Genre) => genre._id === field.value
-															  )?.name
-															: 'Selecione o gênero'}
+														<span className='truncate pr-0.5'>
+															{field.value?.length
+																? field.value
+																		.map(
+																			(id) =>
+																				genres.find((genre) => genre._id === id)
+																					?.name
+																		)
+																		.join(', ')
+																: 'Selecione os gêneros'}
+														</span>
 														<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 													</Button>
 												</FormControl>
@@ -255,21 +298,27 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 														<CommandGroup>
 															{genres.map((genre: Genre) => (
 																<CommandItem
-																	value={genre._id}
+																	value={genre.name}
 																	key={genre._id}
 																	className='text-[#BD8D4C] hover:bg-[#2D3339]'
 																	onSelect={() => {
-																		form.setValue('genre', genre._id);
+																		const currentValues = field.value || [];
+																		const newValues = currentValues.includes(
+																			genre._id
+																		)
+																			? currentValues.filter(
+																					(id) => id !== genre._id
+																			  )
+																			: [...currentValues, genre._id];
+																		form.setValue('genres', newValues);
 																	}}>
-																	{genre.name}
-																	<Check
-																		className={cn(
-																			'ml-auto text-[#BD8D4C]',
-																			genre._id === field.value
-																				? 'opacity-100'
-																				: 'opacity-0'
-																		)}
-																	/>
+																	<div className='flex items-center'>
+																		<Checkbox
+																			checked={field.value?.includes(genre._id)}
+																			className='mr-2 data-[state=checked]:text-[#BD8D4C] data-[state=checked]:border-[#BD8D4C] data-[state=checked]:bg-[#F5F5F5]'
+																		/>
+																		{genre.name}
+																	</div>
 																</CommandItem>
 															))}
 														</CommandGroup>
@@ -347,6 +396,70 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 							/>
 							<FormField
 								control={form.control}
+								name='status'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className='text-[#BD8D4C]'>Status</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant='outline'
+														role='combobox'
+														className={cn(
+															'w-full justify-between text-[#BD8D4C] bg-[#1F2328] border-[#BD8D4C]',
+															!field.value && 'text-[#838586] opacity-70'
+														)}>
+														{field.value
+															? listStatus.find(
+																	(status) => status.value === field.value
+															  )?.label
+															: 'Selecione o status'}
+														<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent className='w-85 p-0 bg-[#1F2328] border-[#BD8D4C]'>
+												<Command className='bg-[#1F2328]'>
+													<CommandInput
+														placeholder='Procure o gênero...'
+														className='text-[#BD8D4C]'
+													/>
+													<CommandList>
+														<CommandEmpty className='text-[#BD8D4C] text-center py-2'>
+															Nenhum status encontrado.
+														</CommandEmpty>
+														<CommandGroup>
+															{listStatus.map((status) => (
+																<CommandItem
+																	value={status.value}
+																	key={status.value}
+																	className='text-[#BD8D4C] hover:bg-[#2D3339]'
+																	onSelect={() => {
+																		form.setValue('status', status.value);
+																	}}>
+																	{status.label}
+																	<Check
+																		className={cn(
+																			'ml-auto text-[#BD8D4C]',
+																			status.value === field.value
+																				? 'opacity-100'
+																				: 'opacity-0'
+																		)}
+																	/>
+																</CommandItem>
+															))}
+														</CommandGroup>
+													</CommandList>
+												</Command>
+											</PopoverContent>
+										</Popover>
+										<FormMessage className='text-red-400' />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
 								name='pages'
 								render={({ field }) => (
 									<FormItem>
@@ -360,6 +473,14 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 												className='text-[#BD8D4C] bg-[#1F2328] border-[#BD8D4C] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
 												placeholder='Informe o número de páginas do livro'
 												{...field}
+												onChange={(e) => {
+													// Converte para número antes de atualizar o campo
+													const value =
+														e.target.value === ''
+															? undefined
+															: Number(e.target.value);
+													field.onChange(value);
+												}}
 											/>
 										</FormControl>
 										<FormMessage className='text-red-400' />

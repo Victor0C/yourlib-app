@@ -18,12 +18,17 @@ import { useEffect, useState } from 'react';
 
 const Books = () => {
 	const [books, setBooks] = useState<Book[]>([]);
-	const [requestBooks] = useState<boolean>(true);
+	const [requestBooks, setRequestBooks] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [search, setSearch] = useState<string>('');
 	const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
 
 	const toastPromise = useMyToastPromise();
+	const [targetBook] = useState<Book | null>(null);
+
+	function refresh() {
+		setRequestBooks(!requestBooks);
+	}
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -49,6 +54,8 @@ const Books = () => {
 			<CreateEditBook
 				open={openCreateUpdate}
 				onOpenChange={setOpenCreateUpdate}
+				refresh={refresh}
+				book={targetBook}
 			/>
 			<div className='flex w-full items-center space-x-2'>
 				<form
