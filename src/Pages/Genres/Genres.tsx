@@ -1,3 +1,4 @@
+import CreateEditGenre from '@/components/Genres/CreateEditGenre';
 import { useMyToastPromise } from '@/components/MyToasts';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -17,17 +18,17 @@ import { useEffect, useState } from 'react';
 
 const Genres = () => {
 	const [genres, setGenres] = useState<Genre[]>([]);
-	const [requestGenres] = useState<boolean>(true);
+	const [requestGenres, setRequestGenres] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [search, setSearch] = useState<string>('');
-	// const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
-	// const [targetGenre, setTargetGenre] = useState<Genre | null>(null);
+	const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
+	const [targetGenre, setTargetGenre] = useState<Genre | null>(null);
 
 	const toastPromise = useMyToastPromise();
 
-	// function refresh() {
-	//   setRequestGenres(!requestGenres);
-	// }
+	function refresh() {
+		setRequestGenres(!requestGenres);
+	}
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -48,19 +49,19 @@ const Genres = () => {
 		);
 	}, [requestGenres, search]);
 
-	// const createUpdate = (book: Book | null = null) => {
-	//   setTargetGenre(book);
-	//   setOpenCreateUpdate(true);
-	// };
+	const createUpdate = (genre: Genre | null = null) => {
+		setTargetGenre(genre);
+		setOpenCreateUpdate(true);
+	};
 
 	return (
 		<Card className='w-full h-auto card bg-[#1F2328] border-[#BD8D4C] border-2 py-2 px-2 '>
-			{/* <CreateEditBook
-        open={openCreateUpdate}
-        onOpenChange={setOpenCreateUpdate}
-        refresh={refresh}
-        book={targetGenre}
-      /> */}
+			<CreateEditGenre
+				open={openCreateUpdate}
+				onOpenChange={setOpenCreateUpdate}
+				refresh={refresh}
+				genre={targetGenre}
+			/>
 			<div className='flex w-full items-center space-x-2'>
 				<form
 					className='flex w-full items-center'
@@ -73,7 +74,7 @@ const Genres = () => {
 						className='text-[#d8d6d2] bg-[#282C34] border-[#BD8D4C]
         focus:border-[#BD8D4C] focus:ring-[#BD8D4C]'
 						type='text'
-						placeholder='Pesquise um livro'
+						placeholder='Pesquise um gênero'
 						disabled={isLoading}
 					/>
 					<Button
@@ -89,8 +90,7 @@ const Genres = () => {
 					className='bg-[#BD8D4C] text-[#1F2328] hover:bg-[#A77B3B] 
       font-bold transition-colors disabled:opacity-50'
 					disabled={isLoading}
-					// onClick={() => createUpdate()}
-				>
+					onClick={() => createUpdate()}>
 					<Plus />
 				</Button>
 			</div>
@@ -128,7 +128,7 @@ const Genres = () => {
 													? 'opacity-50'
 													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
 											}`}
-											// onClick={() => createUpdate(genre)}
+											onClick={() => createUpdate(genre)}
 										/>
 									</div>
 								</TableCell>
