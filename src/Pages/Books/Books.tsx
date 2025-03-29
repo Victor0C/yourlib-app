@@ -18,7 +18,7 @@ import {
 	getBooks,
 	statusBookMap,
 } from '@/services/Books';
-import { Eye, Plus, Search, Trash2 } from 'lucide-react';
+import { Eye, Plus, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const Books = () => {
@@ -147,14 +147,6 @@ const Books = () => {
 													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
 											}`}
 											onClick={() => createUpdate(book)}
-										/>
-										<Trash2
-											size={18}
-											className={`${
-												isLoading
-													? 'opacity-50'
-													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
-											}`}
 										/>
 									</div>
 								</TableCell>
