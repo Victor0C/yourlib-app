@@ -43,4 +43,27 @@ const useMyToastPromise = () => {
 	return showToastPromise;
 };
 
-export { useMyToastPromise };
+
+const confirmActionMyToast = (
+	text: string = 'Tem certeza em fazer isso?',
+	confirmCallback: () => void
+) => {
+	toast(text, {
+		action: {
+			label: 'Sim',
+			onClick: () => confirmCallback(),
+		},
+		style: defaultStyle,
+		actionButtonStyle: {
+			backgroundColor: '#BD8D4C',
+			color: '#1F2328',
+			border: '1px solid #BD8D4C',
+			fontWeight: 'bold',
+			borderRadius: '4px',
+			padding: '4px 12px',
+			marginLeft: '8px',
+		},
+	});
+};
+
+export { useMyToastPromise, confirmActionMyToast };

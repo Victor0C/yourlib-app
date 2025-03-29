@@ -5,7 +5,8 @@ import {
 	ListOrdered,
 	SquareLibrary,
 	User,
-	LogOut
+	LogOut,
+	Signature
 } from 'lucide-react';
 
 import {
@@ -38,19 +39,19 @@ const items = [
 		icon: SquareLibrary,
 	},
 	{
-		title: 'Cadastrar livro',
-		url: '/books/register',
-		icon: BookPlus,
-	},
-	{
 		title: 'Livros emprestados',
 		url: '/books/loans',
 		icon: BookUser,
 	},
 	{
-		title: 'Gêneros de livros',
+		title: 'Gêneros personalizados',
 		url: '/books/genres',
 		icon: BookType,
+	},
+	{
+		title: 'Autores personalizados',
+		url: '/books/authors',
+		icon: Signature,
 	},
 	{
 		title: 'Listas de espera',

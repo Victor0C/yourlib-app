@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Login from './Pages/Login/Login';
 import ProtectedRoutes from './utils/Protectedroutes';
 import Layout from './Layout/Layout';
+import Books from './Pages/Books/Books';
 
 export const AppRoutes = () => {
 	return (
@@ -17,13 +18,7 @@ export const AppRoutes = () => {
 						/>
 						<Route
 							path='/books'
-							element={<p className='text-white'>Tela dos livros</p>}
-						/>
-						<Route
-							path='/books/register'
-							element={
-								<p className='text-white'>Tela do cadastro dos livros</p>
-							}
+							element={<Books/>}
 						/>
 						<Route
 							path='/books/loans'
@@ -36,6 +31,11 @@ export const AppRoutes = () => {
 						<Route
 							path='/books/genres'
 							element={<p className='text-white'>Tela de generos dos livros</p>}
+						/>
+
+						<Route
+							path='/books/authors'
+							element={<p className='text-white'>Tela de generos dos autores</p>}
 						/>
 
 						<Route path='*' element={<Navigate to='/books' />} />
