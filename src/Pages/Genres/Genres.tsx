@@ -1,5 +1,5 @@
-import CreateEditBook from '@/components/Books/CreateEditBook';
-import { useMyToastPromise } from '@/components/MyToasts';
+import CreateEditGenre from '@/components/Genres/CreateEditGenre';
+import { confirmActionMyToast, useMyToastPromise } from '@/components/MyToasts';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,29 +12,22 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { useIsMobile } from '@/hooks/use-mobile';
-import {
-	Book,
-	conditionBookMap,
-	getGenres,
-	statusBookMap,
-} from '@/services/Books';
-import { Eye, Plus, Search } from 'lucide-react';
+import { deleteGenre, Genre, getAll as getGenres } from '@/services/Genres';
+import { Eye, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const Books = () => {
-	const [books, setBooks] = useState<Book[]>([]);
-	const [requestBooks, setRequestBooks] = useState<boolean>(true);
+const Genres = () => {
+	const [genres, setGenres] = useState<Genre[]>([]);
+	const [requestGenres, setRequestGenres] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [search, setSearch] = useState<string>('');
 	const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
-	const [targetBook, setTargetBook] = useState<Book | null>(null);
+	const [targetGenre, setTargetGenre] = useState<Genre | null>(null);
 
 	const toastPromise = useMyToastPromise();
-	const isMobile = useIsMobile();
 
 	function refresh() {
-		setRequestBooks(!requestBooks);
+		setRequestGenres(!requestGenres);
 	}
 
 	useEffect(() => {
@@ -42,7 +35,7 @@ const Books = () => {
 		toastPromise(
 			getGenres(search),
 			(data) => {
-				setBooks(data);
+				setGenres(data);
 				setIsLoading(false);
 				return 'Registros coletados';
 			},
@@ -54,20 +47,44 @@ const Books = () => {
 				return 'Erro desconhecido';
 			}
 		);
-	}, [requestBooks, search]);
+	}, [requestGenres, search]);
 
-	const createUpdate = (book: Book | null = null) => {
-		setTargetBook(book);
+	const createUpdate = (genre: Genre | null = null) => {
+		setTargetGenre(genre);
 		setOpenCreateUpdate(true);
+	};
+
+	const confirmDeleteGenre = (genre: Genre) => {
+		confirmActionMyToast(
+			`Tem certeza em deletar o gênero de ${genre.name}?`,
+			() => {
+				setIsLoading(true);
+				toastPromise(
+					deleteGenre(genre._id),
+					() => {
+						setIsLoading(false);
+						refresh();
+						return 'Gênero deletado';
+					},
+					(error) => {
+						setIsLoading(false);
+						if (error instanceof Error) {
+							return error.message;
+						}
+						return 'Erro desconhecido';
+					}
+				);
+			}
+		);
 	};
 
 	return (
 		<Card className='w-full h-auto card bg-[#1F2328] border-[#BD8D4C] border-2 py-2 px-2 '>
-			<CreateEditBook
+			<CreateEditGenre
 				open={openCreateUpdate}
 				onOpenChange={setOpenCreateUpdate}
 				refresh={refresh}
-				book={targetBook}
+				genre={targetGenre}
 			/>
 			<div className='flex w-full items-center space-x-2'>
 				<form
@@ -81,7 +98,7 @@ const Books = () => {
 						className='text-[#d8d6d2] bg-[#282C34] border-[#BD8D4C]
         focus:border-[#BD8D4C] focus:ring-[#BD8D4C]'
 						type='text'
-						placeholder='Pesquise um livro'
+						placeholder='Pesquise um gênero'
 						disabled={isLoading}
 					/>
 					<Button
@@ -101,55 +118,31 @@ const Books = () => {
 					<Plus />
 				</Button>
 			</div>
-			{books.length === 0 ? (
+			{genres.length === 0 ? (
 				<p className='text-[#f1e2e2] text-center my-4'>
-					Nenhum livro encontrado
+					Nenhum gênero encontrado
 				</p>
 			) : (
 				<Table>
 					<TableCaption className='text-[#f1e2e2] text-sm'>
-						Você tem {books.length} livros cadastrados
+						Você tem {genres.length} gêneros cadastrados
 					</TableCaption>
 					<TableHeader>
 						<TableRow className='hover:bg-transparent'>
-							<TableHead className='text-[#f1e2e2] w-9/12'>Título</TableHead>
-							{!isMobile && (
-								<>
-									<TableHead className='text-[#f1e2e2] text-center'>
-										Status
-									</TableHead>
-									<TableHead className='text-[#f1e2e2] text-center'>
-										Condição
-									</TableHead>
-								</>
-							)}
-
+							<TableHead className='text-[#f1e2e2]'>Nome</TableHead>
+							<TableHead className='text-[#f1e2e2] w-9/12'>Descrição</TableHead>
 							<TableHead className='text-[#f1e2e2] text-center'>
 								Ações
 							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody className='text-[#f1e2e2]'>
-						{books.map((book: Book) => (
-							<TableRow key={book._id} className='hover:bg-transparent'>
+						{genres.map((genre: Genre) => (
+							<TableRow key={genre._id} className='hover:bg-transparent'>
+								<TableCell className='font-medium'>{genre.name}</TableCell>
 								<TableCell className='font-medium w-9/12'>
-									{book.title}
+									{genre.description}
 								</TableCell>
-
-								{!isMobile && (
-									<>
-										<TableCell className='text-center'>
-											{statusBookMap[
-												book.status as keyof typeof statusBookMap
-											] ?? book.status}
-										</TableCell>
-										<TableCell className='text-center'>
-											{conditionBookMap[
-												book.condition as keyof typeof conditionBookMap
-											] ?? book.condition}
-										</TableCell>
-									</>
-								)}
 								<TableCell className='text-center'>
 									<div className='flex justify-center items-center space-x-3'>
 										<Eye
@@ -159,7 +152,16 @@ const Books = () => {
 													? 'opacity-50'
 													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
 											}`}
-											onClick={() => createUpdate(book)}
+											onClick={() => !isLoading && createUpdate(genre)}
+										/>
+										<Trash2
+											size={20}
+											className={`${
+												isLoading
+													? 'opacity-50'
+													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
+											}`}
+											onClick={() => !isLoading && confirmDeleteGenre(genre)}
 										/>
 									</div>
 								</TableCell>
@@ -172,4 +174,4 @@ const Books = () => {
 	);
 };
 
-export default Books;
+export default Genres;

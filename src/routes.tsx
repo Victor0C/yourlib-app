@@ -3,6 +3,7 @@ import Login from './Pages/Login/Login';
 import ProtectedRoutes from './utils/Protectedroutes';
 import Layout from './Layout/Layout';
 import Books from './Pages/Books/Books';
+import Genres from './Pages/Genres/Genres';
 
 export const AppRoutes = () => {
 	return (
@@ -16,10 +17,7 @@ export const AppRoutes = () => {
 							path='/user'
 							element={<p className='text-white'>Tela do usuário</p>}
 						/>
-						<Route
-							path='/books'
-							element={<Books/>}
-						/>
+						<Route path='/books' element={<Books />} />
 						<Route
 							path='/books/loans'
 							element={<p className='text-white'>Tela dos emprestimos</p>}
@@ -28,14 +26,13 @@ export const AppRoutes = () => {
 							path='/books/Waitlists'
 							element={<p className='text-white'>Tela de espera</p>}
 						/>
-						<Route
-							path='/books/genres'
-							element={<p className='text-white'>Tela de generos dos livros</p>}
-						/>
+						<Route path='/books/genres' element={<Genres />} />
 
 						<Route
 							path='/books/authors'
-							element={<p className='text-white'>Tela de generos dos autores</p>}
+							element={
+								<p className='text-white'>Tela de generos dos autores</p>
+							}
 						/>
 
 						<Route path='*' element={<Navigate to='/books' />} />

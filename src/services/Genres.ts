@@ -8,9 +8,9 @@ interface Genre {
 	userId: string;
 }
 
-async function getAll(): Promise<Genre[]> {
+async function getAll(name:string = ''): Promise<Genre[]> {
 	try {
-		const { data } = await api.get<Genre[]>('/users/genres');
+		const { data } = await api.get<Genre[]>(`/users/genres?name=${name}`);
 		return data;
 	} catch (error) {
 		if (
@@ -26,5 +26,57 @@ async function getAll(): Promise<Genre[]> {
 	}
 }
 
-export { getAll };
+async function createGenre(genre: Omit<Genre, '_id' | 'userId'>) {
+	try {
+		const { data } = await api.post<Genre>('/users/genres', genre);
+		return data;
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao cadastrar o gênero');
+		}
+
+		throw new Error('Erro desconhecido');
+	}
+}
+async function updateGenre(id: string, genre: Omit<Genre, '_id' | 'userId'>) {
+	try {
+		const { data } = await api.patch<Genre>(`/users/genres/${id}`, genre);
+		return data;
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao atualizar o livro');
+		}
+
+		throw new Error('Erro desconhecido');
+	}
+}
+
+async function deleteGenre(id: string): Promise<void> {
+	try {
+		await api.delete(`/users/genres/${id}`);
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao atualizar o livro');
+		}
+
+		throw new Error('Erro desconhecido');
+	}
+}
+
+export { getAll, createGenre, updateGenre, deleteGenre };
 export type { Genre };

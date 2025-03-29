@@ -79,5 +79,11 @@ async function updateBook(id: string, book: Omit<Book, '_id'>) {
 	}
 }
 
-export { createBook, getBooks, updateBook, statusBookMap, conditionBookMap };
+export {
+	createBook,
+	getBooks as getGenres,
+	updateBook,
+	statusBookMap,
+	conditionBookMap,
+};
 export type { Book };
