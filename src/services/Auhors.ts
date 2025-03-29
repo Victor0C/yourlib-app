@@ -8,9 +8,9 @@ interface Author {
 	userId: string;
 }
 
-async function getAll(): Promise<Author[]> {
+async function getAll(name: string = ''): Promise<Author[]> {
 	try {
-		const { data } = await api.get<Author[]>('/users/authors');
+		const { data } = await api.get<Author[]>(`/users/authors?name=${name}`);
 		return data;
 	} catch (error) {
 		if (
@@ -21,10 +21,62 @@ async function getAll(): Promise<Author[]> {
 		) {
 			throw new Error('Erro ao recuperar os autores');
 		}
+	}
+
+	throw new Error('Erro desconhecido');
+}
+async function createAuthor(genre: Omit<Author, '_id' | 'userId'>) {
+	try {
+		const { data } = await api.post<Author>('/users/authors', genre);
+		return data;
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao cadastrar o gênero');
+		}
 
 		throw new Error('Erro desconhecido');
 	}
 }
 
-export { getAll };
+async function updateAuthor(id: string, genre: Omit<Author, '_id' | 'userId'>) {
+	try {
+		const { data } = await api.patch<Author>(`/users/authors/${id}`, genre);
+		return data;
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao atualizar o autor');
+		}
+
+		throw new Error('Erro desconhecido');
+	}
+}
+
+async function deleteAuthor(id: string): Promise<void> {
+	try {
+		await api.delete(`/users/authors/${id}`);
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao deletar o autor');
+		}
+
+		throw new Error('Erro desconhecido');
+	}
+}
+
+export { getAll, createAuthor, updateAuthor, deleteAuthor };
 export type { Author };

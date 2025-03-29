@@ -4,6 +4,7 @@ import ProtectedRoutes from './utils/Protectedroutes';
 import Layout from './Layout/Layout';
 import Books from './Pages/Books/Books';
 import Genres from './Pages/Genres/Genres';
+import Authors from './Pages/Authors/Authors';
 
 export const AppRoutes = () => {
 	return (
@@ -28,12 +29,7 @@ export const AppRoutes = () => {
 						/>
 						<Route path='/books/genres' element={<Genres />} />
 
-						<Route
-							path='/books/authors'
-							element={
-								<p className='text-white'>Tela de generos dos autores</p>
-							}
-						/>
+						<Route path='/books/authors' element={<Authors />} />
 
 						<Route path='*' element={<Navigate to='/books' />} />
 					</Route>
