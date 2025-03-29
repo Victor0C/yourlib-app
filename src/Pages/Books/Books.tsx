@@ -12,6 +12,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
 	Book,
 	conditionBookMap,
@@ -27,9 +28,10 @@ const Books = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [search, setSearch] = useState<string>('');
 	const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
+	const [targetBook, setTargetBook] = useState<Book | null>(null);
 
 	const toastPromise = useMyToastPromise();
-	const [targetBook, setTargetBook] = useState<Book | null>(null);
+	const isMobile = useIsMobile();
 
 	function refresh() {
 		setRequestBooks(!requestBooks);
@@ -111,12 +113,17 @@ const Books = () => {
 					<TableHeader>
 						<TableRow className='hover:bg-transparent'>
 							<TableHead className='text-[#f1e2e2] w-9/12'>Título</TableHead>
-							<TableHead className='text-[#f1e2e2] text-center'>
-								Status
-							</TableHead>
-							<TableHead className='text-[#f1e2e2] text-center'>
-								Condição
-							</TableHead>
+							{!isMobile && (
+								<>
+									<TableHead className='text-[#f1e2e2] text-center'>
+										Status
+									</TableHead>
+									<TableHead className='text-[#f1e2e2] text-center'>
+										Condição
+									</TableHead>
+								</>
+							)}
+
 							<TableHead className='text-[#f1e2e2] text-center'>
 								Ações
 							</TableHead>
@@ -128,15 +135,21 @@ const Books = () => {
 								<TableCell className='font-medium w-9/12'>
 									{book.title}
 								</TableCell>
-								<TableCell className='text-center'>
-									{statusBookMap[book.status as keyof typeof statusBookMap] ??
-										book.status}
-								</TableCell>
-								<TableCell className='text-center'>
-									{conditionBookMap[
-										book.condition as keyof typeof conditionBookMap
-									] ?? book.status}
-								</TableCell>
+
+								{!isMobile && (
+									<>
+										<TableCell className='text-center'>
+											{statusBookMap[
+												book.status as keyof typeof statusBookMap
+											] ?? book.status}
+										</TableCell>
+										<TableCell className='text-center'>
+											{conditionBookMap[
+												book.condition as keyof typeof conditionBookMap
+											] ?? book.condition}
+										</TableCell>
+									</>
+								)}
 								<TableCell className='text-center'>
 									<div className='flex justify-center items-center space-x-3'>
 										<Eye

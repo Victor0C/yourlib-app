@@ -182,13 +182,11 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 				withoutCloseButton={true}>
 				<SheetHeader>
 					<SheetTitle className='text-[#BD8D4C]'>
-						{props.book
-							? `Editar o livro ${props.book.title}`
-							: 'Cadastrar livro'}
+						{props.book ? props.book.title : 'Cadastrar livro'}
 					</SheetTitle>
 					<SheetDescription className='text-[#BD8D4C]'>
-						Mestre, por favor preencha o formulário abaixo para tratar desse
-						registro
+						Mestre, o formulário abaixo contém os detalhes deste livro. Você
+						pode atualizá-lo se quiser.
 					</SheetDescription>
 				</SheetHeader>
 				<Form {...form}>
