@@ -61,5 +61,22 @@ async function updateGenre(id: string, genre: Omit<Genre, '_id' | 'userId'>) {
 	}
 }
 
-export { getAll, createGenre, updateGenre };
+async function deleteGenre(id: string): Promise<void> {
+	try {
+		await api.delete(`/users/genres/${id}`);
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao atualizar o livro');
+		}
+
+		throw new Error('Erro desconhecido');
+	}
+}
+
+export { getAll, createGenre, updateGenre, deleteGenre };
 export type { Genre };

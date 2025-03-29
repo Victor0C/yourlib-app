@@ -1,5 +1,5 @@
 import CreateEditGenre from '@/components/Genres/CreateEditGenre';
-import { useMyToastPromise } from '@/components/MyToasts';
+import { confirmActionMyToast, useMyToastPromise } from '@/components/MyToasts';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { Genre, getAll as getGenres } from '@/services/Genres';
-import { Eye, Plus, Search } from 'lucide-react';
+import { deleteGenre, Genre, getAll as getGenres } from '@/services/Genres';
+import { Eye, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const Genres = () => {
@@ -52,6 +52,30 @@ const Genres = () => {
 	const createUpdate = (genre: Genre | null = null) => {
 		setTargetGenre(genre);
 		setOpenCreateUpdate(true);
+	};
+
+	const confirmDeleteGenre = (genre: Genre) => {
+		confirmActionMyToast(
+			`Tem certeza em deletar o gênero de ${genre.name}?`,
+			() => {
+				setIsLoading(true);
+				toastPromise(
+					deleteGenre(genre._id),
+					() => {
+						setIsLoading(false);
+						refresh();
+						return 'Gênero deletado';
+					},
+					(error) => {
+						setIsLoading(false);
+						if (error instanceof Error) {
+							return error.message;
+						}
+						return 'Erro desconhecido';
+					}
+				);
+			}
+		);
 	};
 
 	return (
@@ -128,7 +152,16 @@ const Genres = () => {
 													? 'opacity-50'
 													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
 											}`}
-											onClick={() => createUpdate(genre)}
+											onClick={() => !isLoading && createUpdate(genre)}
+										/>
+										<Trash2
+											size={20}
+											className={`${
+												isLoading
+													? 'opacity-50'
+													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
+											}`}
+											onClick={() => !isLoading && confirmDeleteGenre(genre)}
 										/>
 									</div>
 								</TableCell>

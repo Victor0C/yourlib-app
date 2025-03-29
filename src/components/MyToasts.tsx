@@ -22,7 +22,7 @@ const useMyToastPromise = () => {
 	const showToastPromise = <T,>(
 		promise: Promise<T>,
 		successCallback: (data: T) => string,
-		errorCallback: (data: T) => string
+		errorCallback: (data: unknown) => string
 	) => {
 		return toast.promise(promise, {
 			loading: 'Carregando...',
