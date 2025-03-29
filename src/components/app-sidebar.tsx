@@ -1,12 +1,11 @@
 import {
-	BookPlus,
 	BookType,
 	BookUser,
 	ListOrdered,
-	SquareLibrary,
-	User,
 	LogOut,
-	Signature
+	Signature,
+	SquareLibrary,
+	User
 } from 'lucide-react';
 
 import {
