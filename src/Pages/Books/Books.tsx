@@ -12,8 +12,13 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { Book, getBooks } from '@/services/Books';
-import { Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import {
+	Book,
+	conditionBookMap,
+	getBooks,
+	statusBookMap,
+} from '@/services/Books';
+import { Eye, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const Books = () => {
@@ -24,7 +29,7 @@ const Books = () => {
 	const [openCreateUpdate, setOpenCreateUpdate] = useState<boolean>(false);
 
 	const toastPromise = useMyToastPromise();
-	const [targetBook] = useState<Book | null>(null);
+	const [targetBook, setTargetBook] = useState<Book | null>(null);
 
 	function refresh() {
 		setRequestBooks(!requestBooks);
@@ -48,6 +53,11 @@ const Books = () => {
 			}
 		);
 	}, [requestBooks, search]);
+
+	const createUpdate = (book: Book | null = null) => {
+		setTargetBook(book);
+		setOpenCreateUpdate(true);
+	};
 
 	return (
 		<Card className='w-full h-auto card bg-[#1F2328] border-[#BD8D4C] border-2 py-2 px-2 '>
@@ -85,7 +95,7 @@ const Books = () => {
 					className='bg-[#BD8D4C] text-[#1F2328] hover:bg-[#A77B3B] 
       font-bold transition-colors disabled:opacity-50'
 					disabled={isLoading}
-					onClick={() => setOpenCreateUpdate(true)}>
+					onClick={() => createUpdate()}>
 					<Plus />
 				</Button>
 			</div>
@@ -118,8 +128,15 @@ const Books = () => {
 								<TableCell className='font-medium w-9/12'>
 									{book.title}
 								</TableCell>
-								<TableCell className='text-center'>{book.status}</TableCell>
-								<TableCell className='text-center'>{book.condition}</TableCell>
+								<TableCell className='text-center'>
+									{statusBookMap[book.status as keyof typeof statusBookMap] ??
+										book.status}
+								</TableCell>
+								<TableCell className='text-center'>
+									{conditionBookMap[
+										book.condition as keyof typeof conditionBookMap
+									] ?? book.status}
+								</TableCell>
 								<TableCell className='text-center'>
 									<div className='flex justify-center items-center space-x-3'>
 										<Eye
@@ -129,14 +146,7 @@ const Books = () => {
 													? 'opacity-50'
 													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
 											}`}
-										/>
-										<Pencil
-											size={17}
-											className={`${
-												isLoading
-													? 'opacity-50'
-													: 'cursor-pointer hover:text-[#BD8D4C] transition-colors'
-											}`}
+											onClick={() => createUpdate(book)}
 										/>
 										<Trash2
 											size={18}

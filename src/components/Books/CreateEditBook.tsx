@@ -9,7 +9,7 @@ import {
 	SheetTitle,
 } from '@/components/ui/sheet';
 import { Author, getAll as getAuthors } from '@/services/Auhors';
-import { Book, createBook } from '@/services/Books';
+import { Book, createBook, updateBook } from '@/services/Books';
 import { Genre, getAll as getGenres } from '@/services/Genres';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -75,6 +75,21 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 		}
 	}, [props.open]);
 
+	useEffect(() => {
+		form.reset(getDefaultValues());
+	}, [props.book]);
+
+	
+	const conditions = [
+		{ label: 'NOVO', value: 'NEW' },
+		{ label: 'EMPRESTADO', value: 'GOOD' },
+		{ label: 'DESGASTADO', value: 'WORN' },
+	];
+	const listStatus = [
+		{ label: 'DISPONÍVEL', value: 'AVAILABLE' },
+		{ label: 'EMPRESTADO', value: 'BORROWED' },
+	];
+
 	const FormSchema = z.object({
 		title: z.string({
 			message: 'Insira o título do livro',
@@ -99,19 +114,26 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 		}),
 	});
 
-	const conditions = [
-		{ label: 'Novo', value: 'NEW' },
-		{ label: 'Bom', value: 'GOOD' },
-		{ label: 'Desgastado', value: 'WORN' },
-	];
-	const listStatus = [
-		{ label: 'Disponível', value: 'AVAILABLE' },
-		{ label: 'Emprestado', value: 'BORROWED' },
-	];
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
-		defaultValues: {
+		defaultValues: getDefaultValues(),
+	});
+
+	function getDefaultValues() {
+		if (props.book) {
+			return {
+				_id: props.book._id,
+				title: props.book.title,
+				authors: props.book.authors,
+				genres: props.book.genres,
+				condition: props.book.condition,
+				pages: props.book.pages,
+				description: props.book.description,
+				status: props.book.status,
+			};
+		}
+		return {
 			title: '',
 			authors: [],
 			genres: [],
@@ -119,18 +141,24 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 			pages: 0,
 			description: '',
 			status: '',
-		},
-	});
+		};
+	}
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
 		setIsLoading(true);
 		toastPromise(
-			createBook(data),
+			props.book
+				? updateBook(props.book._id, data as Omit<Book, '_id'>)
+				: createBook(data),
 			() => {
 				setTimeout(() => props.refresh(), 1000);
-				close();
+
+				if (!props.book) {
+					close();
+				}
+
 				setIsLoading(false);
-				return 'Livro cadastrado com sucesso';
+				return `Livro ${props.book ? 'atualizado' : 'cadastrado'} com sucesso`;
 			},
 			(error) => {
 				setIsLoading(false);
@@ -143,7 +171,7 @@ const CreateEditBook = (props: CreateEditBookProps) => {
 	}
 
 	function close() {
-		form.reset();
+		form.reset(getDefaultValues());
 		props.onOpenChange(false);
 	}
 

@@ -12,6 +12,20 @@ interface Book {
 	description: string;
 }
 
+
+const statusBookMap = {
+	AVAILABLE: 'DISPONÍVEL',
+	BORROWED: 'EMPRESTADO',
+};
+
+const conditionBookMap = {
+	NEW: 'NOVO',
+	GOOD: 'EMPRESTADO',
+	WORN: 'DESGASTADO',
+};
+
+
+
 async function getBooks() {
 	try {
 		const { data } = await api.get<Book[]>('/users/books');
@@ -47,6 +61,23 @@ async function createBook(book: Omit<Book, '_id'>) {
 		throw new Error('Erro desconhecido');
 	}
 }
+async function updateBook(id: string, book: Omit<Book, '_id'>) {
+	try {
+		const { data } = await api.patch<Book>(`/users/books/${id}`, book);
+		return data;
+	} catch (error) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status >= 400 &&
+			error.response.status < 500
+		) {
+			throw new Error('Erro ao atualizar o livro');
+		}
 
-export { createBook, getBooks };
+		throw new Error('Erro desconhecido');
+	}
+}
+
+export { createBook, getBooks, updateBook, statusBookMap, conditionBookMap };
 export type { Book };
