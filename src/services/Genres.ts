@@ -8,9 +8,9 @@ interface Genre {
 	userId: string;
 }
 
-async function getAll(): Promise<Genre[]> {
+async function getAll(name:string = ''): Promise<Genre[]> {
 	try {
-		const { data } = await api.get<Genre[]>('/users/genres');
+		const { data } = await api.get<Genre[]>(`/users/genres?name=${name}`);
 		return data;
 	} catch (error) {
 		if (
