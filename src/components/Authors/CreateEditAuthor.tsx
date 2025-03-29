@@ -1,30 +1,29 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetFooter,
-	SheetHeader,
-	SheetTitle,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
 } from '@/components/ui/sheet';
-import { createGenre, Genre, updateGenre } from '@/services/Genres';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useMyToastPromise } from '../MyToasts';
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '../ui/form';
 
-import { Textarea } from '../ui/textarea';
 import { Author, createAuthor, updateAuthor } from '@/services/Auhors';
+import { Textarea } from '../ui/textarea';
 
 interface CreateEditAuthorProps {
 	open: boolean;

@@ -25,9 +25,9 @@ async function getAll(name: string = ''): Promise<Author[]> {
 
 	throw new Error('Erro desconhecido');
 }
-async function createAuthor(genre: Omit<Author, '_id' | 'userId'>) {
+async function createAuthor(author: Omit<Author, '_id' | 'userId'>) {
 	try {
-		const { data } = await api.post<Author>('/users/authors', genre);
+		const { data } = await api.post<Author>('/users/authors', author);
 		return data;
 	} catch (error) {
 		if (
@@ -43,9 +43,9 @@ async function createAuthor(genre: Omit<Author, '_id' | 'userId'>) {
 	}
 }
 
-async function updateAuthor(id: string, genre: Omit<Author, '_id' | 'userId'>) {
+async function updateAuthor(id: string, author: Omit<Author, '_id' | 'userId'>) {
 	try {
-		const { data } = await api.patch<Author>(`/users/authors/${id}`, genre);
+		const { data } = await api.patch<Author>(`/users/authors/${id}`, author);
 		return data;
 	} catch (error) {
 		if (
