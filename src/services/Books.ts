@@ -26,9 +26,9 @@ const conditionBookMap = {
 
 
 
-async function getBooks() {
+async function getBooks(title: string = '') {
 	try {
-		const { data } = await api.get<Book[]>('/users/books');
+		const { data } = await api.get<Book[]>(`/users/books?title=${title}`);
 		return data;
 	} catch (error) {
 		if (

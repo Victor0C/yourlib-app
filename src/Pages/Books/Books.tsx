@@ -38,7 +38,7 @@ const Books = () => {
 	useEffect(() => {
 		setIsLoading(true);
 		toastPromise(
-			getBooks(),
+			getBooks(search),
 			(data) => {
 				setBooks(data);
 				setIsLoading(false);
