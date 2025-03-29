@@ -54,7 +54,7 @@ async function updateGenre(id: string, genre: Omit<Genre, '_id' | 'userId'>) {
 			error.response.status >= 400 &&
 			error.response.status < 500
 		) {
-			throw new Error('Erro ao atualizar o livro');
+			throw new Error('Erro ao atualizar o gênero');
 		}
 
 		throw new Error('Erro desconhecido');
@@ -71,7 +71,7 @@ async function deleteGenre(id: string): Promise<void> {
 			error.response.status >= 400 &&
 			error.response.status < 500
 		) {
-			throw new Error('Erro ao atualizar o livro');
+			throw new Error('Erro ao deletar o gênero');
 		}
 
 		throw new Error('Erro desconhecido');
