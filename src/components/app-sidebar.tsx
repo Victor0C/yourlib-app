@@ -31,6 +31,7 @@ const items = [
 		title: user_name,
 		url: '/user',
 		icon: User,
+    clickable: false
 	},
 	{
 		title: 'Livros',
@@ -82,11 +83,20 @@ export function AppSidebar() {
 										className='text-lg data-[active=true]:bg-[#BD8D4C] data-[active=true]:text-white hover:bg-[#cdc4c4] hover:text-black'
 										asChild>
 										<p
-											onClick={() =>
-												window.location.pathname != item.url &&
-												navigate(item.url)
-											}
-											className='cursor-pointer data-[active=true]:cursor-default'>
+                    onClick={() =>
+                      !item.clickable &&
+                      window.location.pathname != item.url &&
+                      navigate(item.url)
+                    }
+                    className={`${
+                      item.clickable === false 
+                        ? 'cursor-default select-none' 
+                        : 'cursor-pointer'
+                    } data-[active=true]:cursor-default`}
+                    style={{
+                      userSelect: item.clickable === false ? 'none' : 'auto',
+                      pointerEvents: item.clickable === false ? 'none' : 'auto'
+                    }}>
 											<item.icon />
 											<span>{item.title}</span>
 										</p>

@@ -44,6 +44,24 @@ async function getBooks(title: string = '') {
 	}
 }
 
+async function getBookById(id: string) {
+  try {
+    const { data } = await api.get<Book>(`/users/books/${id}`);
+    return data.title;
+  } catch (error) {
+    if (
+      error instanceof AxiosError &&
+      error.response &&
+      error.response.status >= 400 &&
+      error.response.status < 500
+    ) {
+      throw new Error('Erro ao cadastrar o livro');
+    }
+
+    throw new Error('Erro desconhecido');  
+  }
+}
+
 async function createBook(book: Omit<Book, '_id'>) {
 	try {
 		const { data } = await api.post<Book>('/users/books', book);
@@ -83,6 +101,7 @@ export {
 	createBook,
 	getBooks as getGenres,
 	updateBook,
+  getBookById,
 	statusBookMap,
 	conditionBookMap,
 };

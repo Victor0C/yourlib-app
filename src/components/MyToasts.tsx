@@ -35,7 +35,7 @@ const useMyToastPromise = () => {
 					message: errorCallback(error),
 				};
 			},
-			position: 'top-right',
+			position: 'bottom-center',
 			style: defaultStyle,
 		});
 	};
