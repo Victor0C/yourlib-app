@@ -5,6 +5,7 @@ import Layout from './Layout/Layout';
 import Books from './Pages/Books/Books';
 import Genres from './Pages/Genres/Genres';
 import Authors from './Pages/Authors/Authors';
+import Loans from './Pages/Loans/Loans';
 
 export const AppRoutes = () => {
 	return (
@@ -21,7 +22,7 @@ export const AppRoutes = () => {
 						<Route path='/books' element={<Books />} />
 						<Route
 							path='/books/loans'
-							element={<p className='text-white'>Tela dos emprestimos</p>}
+							element={<Loans/>}
 						/>
 						<Route
 							path='/books/Waitlists'
