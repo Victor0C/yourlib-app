@@ -7,7 +7,7 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { updateLoan, statusLoan, Loan } from "@/services/Loans";
+import { updateLoan, Loan } from "@/services/Loans";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

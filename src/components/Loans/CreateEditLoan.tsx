@@ -8,7 +8,7 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { createLoan, Loan, updateLoan, statusLoan } from "@/services/Loans";
+import { createLoan, Loan, updateLoan } from "@/services/Loans";
 import { Book, getGenres as getAllBooks } from "@/services/Books";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
